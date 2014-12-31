@@ -99,7 +99,7 @@ module.exports = function(grunt) {
         },
         // main logic
         file: function(root, fileStats, next) {
-          var deep, deepBlueSea, filename, last, _path, total;
+          var deep, levels, filename, last, _path, total;
           // ignore hidden
           if (fileStats.name[0] !== '.') {
             filename = path.basename(fileStats.name, path.extname(fileStats.name));
@@ -112,11 +112,11 @@ module.exports = function(grunt) {
             }
 
             // directories array
-            deepBlueSea = root.split('/');
+            levels = root.split('/');
             last = exportable;
-            total = deepBlueSea.length;
-            for (var _i = 0, _len = deepBlueSea.length; _i < _len; ++_i) {
-              deep = deepBlueSea[_i];
+            total = levels.length;
+            for (var _i = 0, _len = levels.length; _i < _len; ++_i) {
+              deep = levels[_i];
               // ignore relative (useful?)
               if (deep !== '.' && deep !== '..') {
                 if (!last[deep]) {
