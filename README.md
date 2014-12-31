@@ -22,15 +22,23 @@ To do.
 
 ## Options
 #### format
-Description: File format and extension.
-Type: `[String:String]`
+Type: `String`
 Values: `coffee`, `js`
 Default: `js`
 
+File format and extension.
+
 #### requireWithExtension
-Description: Include extensions on `require` calls.
-Type: `[Boolean:Boolean]`
+Type: `Boolean`
 Default: `false`
+
+Include extensions on `require` calls.
+
+#### notice
+Type: `String`
+Default: `false`
+
+Optional file header message.
 
 ## Examples
 #### Basic (javascript)
