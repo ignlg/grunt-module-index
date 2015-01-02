@@ -48,6 +48,14 @@ Optional prefix for every file path.
 
 _Example:_ `pathPrefix: './'` and a file in `src/` ends as `require('./src/...`
 
+#### pathSep
+Type: `String|false`
+Default: `false`
+
+Force a file separator for paths.
+
+_Example:_ `pathSep: '/'` and a file at (windows) `src\\file.js` ends as `require('src/file.js')`
+
 #### requireWithExtension
 Type: `Boolean`
 Default: `false`
@@ -75,6 +83,7 @@ moduleIndex:
       notice: "Generated with grunt"
       omitDirs: ['src']
       pathPrefix: './'
+      pathSep: '/'
       requireWithExtension: true
 ```
 

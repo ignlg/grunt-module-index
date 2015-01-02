@@ -81,7 +81,7 @@ module.exports = function(grunt) {
     // normalize dest
     if (dest) {
       // it's just a dir
-      if (dest[dest.length - 1] === '/') {
+      if (dest[dest.length - 1] === path.sep[path.sep.length - 1]) {
         dest += 'index.' + fmt;
       }
       dest = path.normalize(dest);
@@ -121,16 +121,21 @@ module.exports = function(grunt) {
             );
 
             if (options.requireWithExtension) {
-              _path = root + '/' + fileStats.name;
+              _path = root + path.sep + fileStats.name;
             }
             else {
-              _path = root + '/' + filename;
+              _path = root + path.sep + filename;
             }
 
             _path = options.pathPrefix + path.relative(_dest_dir, _path);
 
+            // Force a file separator
+            if (options.pathSep && options.pathSep !== path.sep) {
+              _path = _path.replace(path.sep, options.pathSep, 'g');
+            }
+
             // directories array
-            levels = root.split('/');
+            levels = root.split(path.sep);
             last = exportable;
             total = levels.length;
             for (var _i = 0; _i < total; ++_i) {
@@ -218,7 +223,8 @@ module.exports = function(grunt) {
         format: grunt.option('format') || 'js',
         requireWithExtension: grunt.option('requireWithExtension') === true,
         pathPrefix: grunt.option('pathPrefix') || '',
-        omitDirs: grunt.option('omitDirs') || []
+        omitDirs: grunt.option('omitDirs') || [],
+        pathSep: grunt.option('pathSep') || false
       });
 
       // omitDirs must be an array
