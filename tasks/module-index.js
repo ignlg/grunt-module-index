@@ -79,7 +79,7 @@ module.exports = function(grunt) {
     // normalize dest
     if (dest) {
       // it's just a dir
-      if (dest[dest.length - 1] === path.sep[path.sep.length - 1]) {
+      if (dest[dest.length - 1] === options.pathSep) {
         dest += 'index.' + fmt;
       }
       dest = path.normalize(dest);
@@ -115,7 +115,8 @@ module.exports = function(grunt) {
         },
         // main logic
         file: function(root, fileStats, next) {
-          var deep, levels, filename, last, _path, total;
+          var deep, levels, filename, last, _path, total, _root = path.normalize(root),
+            _sep = path.sep;
           // ignore hidden
           if (fileStats.name[0] !== '.') {
             filename = path.basename(
@@ -134,11 +135,14 @@ module.exports = function(grunt) {
 
             // Force a file separator
             if (options.pathSep && options.pathSep !== path.sep) {
-              _path = _path.replace(path.sep, options.pathSep, 'g');
+              var _re = new RegExp('\\' + path.sep, "g");
+              _path = _path.replace(_re, options.pathSep);
+              _root = root.replace(_re, options.pathSep);
+              _sep = options.pathSep;
             }
 
             // directories array
-            levels = root.split(path.sep);
+            levels = _root.split(_sep);
             last = exportable;
             total = levels.length;
             for (var _i = 0; _i < total; ++_i) {
@@ -227,12 +231,17 @@ module.exports = function(grunt) {
         requireWithExtension: grunt.option('requireWithExtension') === true,
         pathPrefix: grunt.option('pathPrefix') || '',
         omitDirs: grunt.option('omitDirs') || [],
-        pathSep: grunt.option('pathSep') || false
+        pathSep: grunt.option('pathSep') || '/'
       });
 
       // omitDirs must be an array
       if ('string' === typeof options.omitDirs) {
         options.omitDirs = [options.omitDirs];
+      }
+
+      // Do not force pathSep
+      if (grunt.option('pathSep') === false) {
+        options.pathSep = path.sep;
       }
 
       this.files.forEach(function(filePair) {

@@ -50,11 +50,11 @@ _Example:_ `pathPrefix: './'` and a file in `src/` ends as `require('./src/...`
 
 #### pathSep
 Type: `String|false`
-Default: `false`
+Default: `'/'`
 
-Force a file separator for paths.
+Force a file separator for paths. A value of `false` will use the system separator.
 
-_Example:_ `pathSep: '/'` and a file at (windows) `src\\file.js` ends as `require('src/file.js')`
+_Example:_ `pathSep: '\'` and a file at `src/file.js` ends as `require('src\file.js')`
 
 #### requireWithExtension
 Type: `Boolean`
