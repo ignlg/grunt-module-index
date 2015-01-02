@@ -1,7 +1,7 @@
 /*
  * grunt-module-index
  *
- * Copyright (c) 2014 Ignacio Lago
+ * Copyright (c) 2014-2015 Ignacio Lago
  * Licensed under the MIT license.
  */
 
