@@ -123,7 +123,7 @@ module.exports = function(grunt) {
               _path = root + '/' + filename;
             }
 
-            _path = path.relative(_dest_dir, _path);
+            _path = options.pathPrefix + path.relative(_dest_dir, _path);
 
             // directories array
             levels = root.split('/');
@@ -202,8 +202,9 @@ module.exports = function(grunt) {
     function() {
       // merge default options
       var options = this.options({
-        format: grunt.option('format'),
-        requireWithExtension: grunt.option('requireWithExtension') === true
+        format: grunt.option('format') || 'js',
+        requireWithExtension: grunt.option('requireWithExtension') === true,
+        pathPrefix: grunt.option('pathPrefix') || ''
       });
 
       this.files.forEach(function(filePair) {

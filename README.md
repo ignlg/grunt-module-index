@@ -28,17 +28,23 @@ Default: `js`
 
 File format and extension.
 
+#### notice
+Type: `String`
+
+Optional file header message.
+
 #### requireWithExtension
 Type: `Boolean`
 Default: `false`
 
 Include extensions on `require` calls.
 
-#### notice
+#### pathPrefix
 Type: `String`
-Default: `false`
 
-Optional file header message.
+Optional prefix for every file path.
+
+Example: `pathPrefix: './'` and a file in `src/` ends as `require('./src/...`
 
 ## Examples
 #### Basic (javascript)
