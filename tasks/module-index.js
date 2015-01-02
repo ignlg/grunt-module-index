@@ -129,10 +129,17 @@ module.exports = function(grunt) {
             levels = root.split('/');
             last = exportable;
             total = levels.length;
-            for (var _i = 0, _len = levels.length; _i < _len; ++_i) {
+            for (var _i = 0; _i < total; ++_i) {
               deep = levels[_i];
-              // ignore relative (useful?)
-              if (deep !== '.' && deep !== '..') {
+              // ignore some dirs
+              if (
+                // not empty
+                deep &&
+                // not relative
+                deep !== '.' && deep !== '..' &&
+                // not omitted
+                options.omitDirs.indexOf(deep) === -1
+              ) {
                 if (!last[deep]) {
                   last[deep] = {};
                 }
@@ -204,8 +211,14 @@ module.exports = function(grunt) {
       var options = this.options({
         format: grunt.option('format') || 'js',
         requireWithExtension: grunt.option('requireWithExtension') === true,
-        pathPrefix: grunt.option('pathPrefix') || ''
+        pathPrefix: grunt.option('pathPrefix') || '',
+        omitDirs: grunt.option('omitDirs') || []
       });
+
+      // omitDirs must be an array
+      if ('string' === typeof options.omitDirs) {
+        options.omitDirs = [options.omitDirs];
+      }
 
       this.files.forEach(function(filePair) {
         var dest = moduleIndex(filePair.src, filePair.dest, options);

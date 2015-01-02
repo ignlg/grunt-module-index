@@ -33,18 +33,26 @@ Type: `String`
 
 Optional file header message.
 
-#### requireWithExtension
-Type: `Boolean`
-Default: `false`
+#### omitDirs
+Type: `Array|String`
+Default: `[]`
 
-Include extensions on `require` calls.
+Omit these directory names for the object hierarchy.
+
+_Example:_ `omitDirs: ['src']`
 
 #### pathPrefix
 Type: `String`
 
 Optional prefix for every file path.
 
-Example: `pathPrefix: './'` and a file in `src/` ends as `require('./src/...`
+_Example:_ `pathPrefix: './'` and a file in `src/` ends as `require('./src/...`
+
+#### requireWithExtension
+Type: `Boolean`
+Default: `false`
+
+Include extensions on `require` calls.
 
 ## Examples
 #### Basic (javascript)
@@ -64,8 +72,10 @@ moduleIndex:
     dest: "index.js"
     options:
       format: "js"
-      requireWithExtension: true
       notice: "Generated with grunt"
+      omitDirs: ['src']
+      pathPrefix: './'
+      requireWithExtension: true
 ```
 
 ## Output (index.js)
