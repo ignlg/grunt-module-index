@@ -19,6 +19,15 @@ module.exports = function(grunt) {
       options: {
         jshintrc: '.jshintrc'
       },
+    },
+    jsbeautifier: {
+      all: [
+        'Gruntfile.js',
+        'tasks/*.js'
+      ],
+      options: {
+        config: '.jsbeautifyrc'
+      }
     }
   });
 
@@ -27,7 +36,8 @@ module.exports = function(grunt) {
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-jsbeautifier');
 
   // By default, lint and build.
-  grunt.registerTask('default', ['jshint']);
+  grunt.registerTask('default', ['jshint', 'jsbeautifier', 'jshint']);
 };
