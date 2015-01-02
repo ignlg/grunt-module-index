@@ -76,8 +76,6 @@ module.exports = function(grunt) {
       ret = '',
       _dest_dir;
     var fmt = options.format || 'js';
-    // create dest folder
-    grunt.file.mkdir(path.dirname(dest));
     // normalize dest
     if (dest) {
       // it's just a dir
@@ -90,6 +88,11 @@ module.exports = function(grunt) {
       dest = 'index.' + fmt;
     }
     _dest_dir = path.dirname(dest);
+
+    // create dest folder
+    if (!grunt.file.exists(_dest_dir)) {
+      grunt.file.mkdir(_dest_dir);
+    }
 
     // options for walker
     var walkerOptions = {
