@@ -208,7 +208,7 @@ module.exports = function(grunt) {
       }
       // individual files
       else {
-        fileEntry(filePath);
+        fileEntry(unixifyPath(options.pathPrefix + path.relative(_dest_dir, filePath)));
       }
     });
 
