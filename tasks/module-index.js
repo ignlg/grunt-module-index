@@ -86,8 +86,6 @@ module.exports = function(grunt) {
       _dest_dir,
       fmt = options.format || 'js';
 
-    dest = unixifyPath(dest);
-
     //------- file entry
     function fileEntry(filePath) {
       var deep,
@@ -98,20 +96,22 @@ module.exports = function(grunt) {
         fileName,
         fileExt,
         fileRoot,
-        _path = filePath;
+        _path;
 
-      filePath = path.normalize(filePath);
+      _path = filePath = path.normalize(filePath);
       file = path.basename(filePath);
       fileExt = path.extname(filePath);
       fileName = path.basename(filePath, fileExt);
       fileRoot = path.dirname(filePath);
 
       if (!options.requireWithExtension) {
-        _path = fileRoot + '/' + fileName;
+        _path = fileRoot + path.sep + fileName;
       }
 
+      _path = unixifyPath(_path);
+
       // directories array
-      levels = fileRoot.split('/');
+      levels = fileRoot.split(path.sep);
       last = exportable;
       total = levels.length;
       for (var _i = 0; _i < total; ++_i) {
@@ -145,7 +145,7 @@ module.exports = function(grunt) {
     if (dest) {
       // it's just a dir
       if (grunt.file.isDir(dest)) {
-        dest = path.join(dest, '/index.' + fmt);
+        dest = path.join(dest, path.sep + 'index.' + fmt);
       }
       dest = path.normalize(dest);
     }
@@ -185,7 +185,7 @@ module.exports = function(grunt) {
           // ignore hidden
           if (fileStats.name[0] !== '.') {
             _path = root + path.sep + fileStats.name;
-            _path = unixifyPath(options.pathPrefix + path.relative(_dest_dir, _path));
+            _path = path.relative(_dest_dir, _path);
             fileEntry(_path);
           }
           return next();
@@ -208,7 +208,7 @@ module.exports = function(grunt) {
       }
       // individual files
       else {
-        fileEntry(unixifyPath(options.pathPrefix + path.relative(_dest_dir, filePath)));
+        fileEntry(path.relative(_dest_dir, filePath));
       }
     });
 
