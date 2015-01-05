@@ -48,14 +48,6 @@ Optional prefix for every file path.
 
 _Example:_ `pathPrefix: './'` and a file in `src/` ends as `require('./src/...`
 
-#### pathSep
-Type: `String|false`
-Default: `'/'`
-
-Force a file separator for paths. A value of `false` will use the system separator.
-
-_Example:_ `pathSep: '\'` and a file at `src/file.js` ends as `require('src\file.js')`
-
 #### requireWithExtension
 Type: `Boolean`
 Default: `false`

@@ -69,18 +69,83 @@ function printObjJs(obj, deep) {
   return ret.join(',\n');
 }
 
+function unixifyPath(filePath) {
+  if (process.platform === 'win32') {
+    return filePath.replace(/\\/g, '/');
+  }
+  else {
+    return filePath;
+  }
+}
+
 module.exports = function(grunt) {
 
   function moduleIndex(dirs, dest, options) {
-    var dir, exportable = {},
+    var exportable = {},
       ret = '',
-      _dest_dir;
-    var fmt = options.format || 'js';
+      _dest_dir,
+      fmt = options.format || 'js';
+
+    dest = unixifyPath(dest);
+
+    //------- file entry
+    function fileEntry(filePath) {
+      var deep,
+        levels,
+        last,
+        total,
+        file,
+        fileName,
+        fileExt,
+        fileRoot,
+        _path = filePath;
+
+      filePath = path.normalize(filePath);
+      file = path.basename(filePath);
+      fileExt = path.extname(filePath);
+      fileName = path.basename(filePath, fileExt);
+      fileRoot = path.dirname(filePath);
+
+      if (!options.requireWithExtension) {
+        _path = fileRoot + '/' + fileName;
+      }
+
+      // directories array
+      levels = fileRoot.split('/');
+      last = exportable;
+      total = levels.length;
+      for (var _i = 0; _i < total; ++_i) {
+        deep = levels[_i];
+        // ignore some dirs
+        if (
+          // not empty
+          deep &&
+          // not relative
+          deep !== '.' && deep !== '..' &&
+          // not omitted
+          options.omitDirs.indexOf(deep) === -1
+        ) {
+          if (!last[deep]) {
+            last[deep] = {};
+          }
+          // filename
+          if ((_i + 1) === total) {
+            last[deep][fileName] = _path;
+          }
+          else {
+            last = last[deep];
+          }
+        }
+      }
+    }
+
+    //------- Destination
+
     // normalize dest
     if (dest) {
       // it's just a dir
-      if (dest[dest.length - 1] === options.pathSep) {
-        dest += 'index.' + fmt;
+      if (grunt.file.isDir(dest)) {
+        dest = path.join(dest, '/index.' + fmt);
       }
       dest = path.normalize(dest);
     }
@@ -94,7 +159,7 @@ module.exports = function(grunt) {
       grunt.file.mkdir(_dest_dir);
     }
 
-    // options for walker
+    //------- Options for walker
     var walkerOptions = {
       listeners: {
         // sorted output
@@ -115,59 +180,13 @@ module.exports = function(grunt) {
         },
         // main logic
         file: function(root, fileStats, next) {
-          var deep, levels, filename, last, _path, total, _root = path.normalize(root),
-            _sep = path.sep;
+          var _path;
+
           // ignore hidden
           if (fileStats.name[0] !== '.') {
-            filename = path.basename(
-              fileStats.name,
-              path.extname(fileStats.name)
-            );
-
-            if (options.requireWithExtension) {
-              _path = root + path.sep + fileStats.name;
-            }
-            else {
-              _path = root + path.sep + filename;
-            }
-
-            _path = options.pathPrefix + path.relative(_dest_dir, _path);
-
-            // Force a file separator
-            if (options.pathSep && options.pathSep !== path.sep) {
-              var _re = new RegExp('\\' + path.sep, "g");
-              _path = _path.replace(_re, options.pathSep);
-              _root = root.replace(_re, options.pathSep);
-              _sep = options.pathSep;
-            }
-
-            // directories array
-            levels = _root.split(_sep);
-            last = exportable;
-            total = levels.length;
-            for (var _i = 0; _i < total; ++_i) {
-              deep = levels[_i];
-              // ignore some dirs
-              if (
-                // not empty
-                deep &&
-                // not relative
-                deep !== '.' && deep !== '..' &&
-                // not omitted
-                options.omitDirs.indexOf(deep) === -1
-              ) {
-                if (!last[deep]) {
-                  last[deep] = {};
-                }
-                // filename
-                if ((_i + 1) === total) {
-                  last[deep][filename] = _path;
-                }
-                else {
-                  last = last[deep];
-                }
-              }
-            }
+            _path = root + path.sep + fileStats.name;
+            _path = unixifyPath(options.pathPrefix + path.relative(_dest_dir, _path));
+            fileEntry(_path);
           }
           return next();
         },
@@ -178,12 +197,19 @@ module.exports = function(grunt) {
     };
 
     // walk!
-    dirs.forEach(function(filepath) {
-      if (!grunt.file.exists(filepath)) {
-        console.error('File ' + filepath + ' missing!');
+    dirs.forEach(function(filePath) {
+      if (!grunt.file.exists(filePath)) {
+        console.error('File ' + filePath + ' missing!');
         return false;
       }
-      var walker = walk.walkSync(filepath, walkerOptions);
+      // walk directories
+      if (grunt.file.isDir(filePath)) {
+        walk.walkSync(filePath, walkerOptions);
+      }
+      // individual files
+      else {
+        fileEntry(filePath);
+      }
     });
 
     // create the content
@@ -230,18 +256,12 @@ module.exports = function(grunt) {
         format: grunt.option('format') || 'js',
         requireWithExtension: grunt.option('requireWithExtension') === true,
         pathPrefix: grunt.option('pathPrefix') || '',
-        omitDirs: grunt.option('omitDirs') || [],
-        pathSep: grunt.option('pathSep') || '/'
+        omitDirs: grunt.option('omitDirs') || []
       });
 
       // omitDirs must be an array
       if ('string' === typeof options.omitDirs) {
         options.omitDirs = [options.omitDirs];
-      }
-
-      // Do not force pathSep
-      if (grunt.option('pathSep') === false) {
-        options.pathSep = path.sep;
       }
 
       this.files.forEach(function(filePair) {
