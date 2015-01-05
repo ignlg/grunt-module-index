@@ -130,7 +130,7 @@ module.exports = function(grunt) {
           }
           // filename
           if ((_i + 1) === total) {
-            last[deep][fileName] = _path;
+            last[deep][fileName] = options.pathPrefix + _path;
           }
           else {
             last = last[deep];
