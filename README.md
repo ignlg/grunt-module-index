@@ -65,9 +65,10 @@ Include file extensions on `require` calls.
 ```javascript
 moduleIndex: {
   build: {
-    src: ["src/"]
-    options:
+    src: ["src/"],
+    options: {
       omitDirs: ["src"]
+    }
   }
 }
 ```
