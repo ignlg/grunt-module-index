@@ -28,6 +28,12 @@ Default: `js`
 
 File format and extension.
 
+#### indentTab
+Type: `String`
+Default: `'  '`
+
+Indentation characters.
+
 #### notice
 Type: `String`
 

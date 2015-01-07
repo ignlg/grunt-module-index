@@ -23,46 +23,52 @@ function nTimes(str, n) {
 }
 
 // Prints our path-objects, coffee style
-function printObjCoffee(obj, deep) {
-  var ret = "";
-  var key;
+function printObjCoffee(obj, deep, _tab) {
+  var ret = "",
+    key;
   if (deep == null) {
     deep = 1;
+  }
+  if (_tab == null) {
+    _tab = '  ';
   }
   for (key in obj) {
     if (!{}.hasOwnProperty.call(obj, key)) {
       continue;
     }
     if ('object' === typeof obj[key]) {
-      ret += nTimes('  ', deep) + key + ':' + "\n";
-      ret += printObjCoffee(obj[key], deep + 1);
+      ret += nTimes(_tab, deep) + key + ':' + "\n";
+      ret += printObjCoffee(obj[key], deep + 1, _tab);
     }
     else {
-      ret += nTimes('  ', deep) + key + ': require "' + obj[key] + '"\n';
+      ret += nTimes(_tab, deep) + key + ': require "' + obj[key] + '"\n';
     }
   }
   return ret;
 }
 
 // Prints our path-objects, javascript style
-function printObjJs(obj, deep) {
-  var ret = [];
-  var key;
+function printObjJs(obj, deep, _tab) {
+  var ret = [],
+    key;
   if (deep == null) {
     deep = 1;
+  }
+  if (_tab == null) {
+    _tab = '  ';
   }
   for (key in obj) {
     if (!{}.hasOwnProperty.call(obj, key)) {
       continue;
     }
     if ('object' === typeof obj[key]) {
-      var str = nTimes('  ', deep) + '"' + key + '": {' + "\n";
-      str += printObjJs(obj[key], deep + 1);
-      str += '\n' + nTimes('  ', deep) + '}';
+      var str = nTimes(_tab, deep) + '"' + key + '": {' + "\n";
+      str += printObjJs(obj[key], deep + 1, _tab);
+      str += '\n' + nTimes(_tab, deep) + '}';
       ret.push(str);
     }
     else {
-      ret.push(nTimes('  ', deep) + '"' + key + '": require("' +
+      ret.push(nTimes(_tab, deep) + '"' + key + '": require("' +
         obj[key] + '")');
     }
   }
@@ -222,7 +228,7 @@ module.exports = function(grunt) {
         ret += '#! ' + options.notice + '\n';
       }
       ret += 'module.exports = exports =\n';
-      ret += printObjCoffee(exportable);
+      ret += printObjCoffee(exportable, null, options.indentTab);
       ret += '\n#EOF\n';
     }
     else {
@@ -231,7 +237,7 @@ module.exports = function(grunt) {
         ret += '//! ' + options.notice + '\n';
       }
       ret += 'module.exports = exports = {\n';
-      ret += printObjJs(exportable);
+      ret += printObjJs(exportable, null, options.indentTab);
       ret += '\n};\n//EOF\n';
     }
 
@@ -256,7 +262,8 @@ module.exports = function(grunt) {
         format: grunt.option('format') || 'js',
         requireWithExtension: grunt.option('requireWithExtension') === true,
         pathPrefix: grunt.option('pathPrefix') || '',
-        omitDirs: grunt.option('omitDirs') || []
+        omitDirs: grunt.option('omitDirs') || [],
+        indentTab: grunt.option('indentTab') || '  '
       });
 
       // omitDirs must be an array
