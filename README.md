@@ -1,7 +1,7 @@
 grunt-module-index
 ==================
 
-Grunt task to auto-build module index files (exports) based on folders and files.
+Grunt task to auto-build module index files (exports) based on folders and files. Compatible with CommonJS libraries (Browserify, etc).
 
 ## Getting Started
 This plugin requires [Grunt](https://gruntjs.com) `~0.4.0`.
