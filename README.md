@@ -92,6 +92,7 @@ moduleIndex:
       omitDirs: ["src"]
       pathPrefix: "./"
       requireWithExtension: true
+      flatIndex: false
 ```
 
 ## Output example
