@@ -26,10 +26,10 @@ function nTimes(str, n) {
 function printObjCoffee(obj, deep, _tab) {
   var ret = "",
     key;
-  if (deep == null) {
+  if (deep === null) {
     deep = 1;
   }
-  if (_tab == null) {
+  if (_tab === null) {
     _tab = '  ';
   }
   for (key in obj) {
@@ -51,10 +51,10 @@ function printObjCoffee(obj, deep, _tab) {
 function printObjJs(obj, deep, _tab) {
   var ret = [],
     key;
-  if (deep == null) {
+  if (deep === null) {
     deep = 1;
   }
-  if (_tab == null) {
+  if (_tab === null) {
     _tab = '  ';
   }
   for (key in obj) {
@@ -127,19 +127,26 @@ module.exports = function(grunt) {
           // not empty
           deep &&
           // not relative
-          deep !== '.' && deep !== '..' &&
-          // not omitted
-          options.omitDirs.indexOf(deep) === -1
+          deep !== '.' && deep !== '..'
         ) {
-          if (!last[deep]) {
-            last[deep] = {};
+          // ignore folder(s)
+          if (options.flatIndex || options.omitDirs.indexOf(deep) >= 0) {
+            if ((_i + 1) === total) {
+              last[fileName] = options.pathPrefix + _path;
+            }
           }
-          // filename
-          if ((_i + 1) === total) {
-            last[deep][fileName] = options.pathPrefix + _path;
-          }
-          else {
-            last = last[deep];
+          // not omitted
+          else if (options.omitDirs.indexOf(deep) === -1) {
+            if (!last[deep]) {
+              last[deep] = {};
+            }
+            // filename
+            if ((_i + 1) === total) {
+              last[deep][fileName] = options.pathPrefix + _path;
+            }
+            else {
+              last = last[deep];
+            }
           }
         }
       }
@@ -263,7 +270,8 @@ module.exports = function(grunt) {
         requireWithExtension: grunt.option('requireWithExtension') === true,
         pathPrefix: grunt.option('pathPrefix') || '',
         omitDirs: grunt.option('omitDirs') || [],
-        indentTab: grunt.option('indentTab') || '  '
+        indentTab: grunt.option('indentTab') || '  ',
+        flatIndex: grunt.option('flatIndex') || false
       });
 
       // omitDirs must be an array

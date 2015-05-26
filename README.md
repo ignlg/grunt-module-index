@@ -60,6 +60,12 @@ Default: `false`
 
 Include file extensions on `require` calls.
 
+#### flatIndex
+Type: `Boolean`
+Default: `false`
+
+Object hierarchy omits every directory.
+
 ## Examples
 #### Basic (javascript)
 ```javascript

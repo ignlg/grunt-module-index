@@ -1,7 +1,7 @@
 {
   "name": "grunt-module-index",
   "description": "Auto-build module index file (exports) based on folders and files.",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "homepage": "https://github.com/ignlg/grunt-module-index",
   "author": {
     "name": "Ignacio Lago",
